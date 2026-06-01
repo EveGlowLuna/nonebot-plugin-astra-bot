@@ -63,6 +63,10 @@ DEFAULT_IMAGE_ANALYZER = (
     '可根据最近十条对话或根据需求分析，删减部分无需信息或补充场景细节。'
 )
 
+DEFAULT_NAME = "Astra"
+DEFAULT_NAME_CN = "残羽"
+DEFAULT_PERSON_SETTING = "女、大二生，20岁。"
+
 DEFAULT_SYSTEM_PROMPT = (
     '请你根据用户的要求进行输出。请注意，遇到提问，先做三层思考：'
     '①目的——对方问这个是想达成什么；'
@@ -75,9 +79,9 @@ DEFAULT_SYSTEM_PROMPT = (
 
 @dataclass
 class Config:
-    name: str = ""
-    name_cn: str = ""
-    person_setting: str = ""
+    name: str = DEFAULT_NAME
+    name_cn: str = DEFAULT_NAME_CN
+    person_setting: str = DEFAULT_PERSON_SETTING
     enabled_groups: list[int] = field(default_factory=list)
     output_style: str = DEFAULT_OUTPUT_STYLE
     reply_style: str = DEFAULT_REPLY_STYLE
@@ -146,9 +150,9 @@ class Config:
             keyword = []
 
         config = cls(
-            name=raw.get("name", ""),
-            name_cn=raw.get("name_cn", ""),
-            person_setting=raw.get("person_setting", ""),
+            name=raw.get("name", DEFAULT_NAME),
+            name_cn=raw.get("name_cn", DEFAULT_NAME_CN),
+            person_setting=raw.get("person_setting", DEFAULT_PERSON_SETTING),
             enabled_groups=enabled_groups,
             keyword=keyword,
             output_style=raw.get("output_style", DEFAULT_OUTPUT_STYLE),
@@ -181,9 +185,6 @@ class Config:
             missing_api.append("DEEPSEEK_API_KEY")
         if missing_api:
             logger.warning(f"Missing API keys: {', '.join(missing_api)}. AI calls will be skipped.")
-
-        if not config.name or not config.name_cn:
-            logger.warning("name/name_cn not configured. Bot identity will be empty.")
 
         return config
 
