@@ -16,7 +16,7 @@ from nonebot_plugin_astra_bot.reply_controller import ReplyController
 from nonebot_plugin_astra_bot.logger import logger
 
 __plugin_meta__ = PluginMetadata(
-    name="AstraBot",
+    name="nonebot_plugin_astra_bot",
     description="AI-powered QQ group chat bot with multi-LLM support, memory system, plugin mechanism, and web search",
     usage="配置 API Key 后部署到 QQ 群即可使用。支持 @触发和关键词触发。",
     type="application",

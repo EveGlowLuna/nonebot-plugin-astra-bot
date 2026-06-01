@@ -23,6 +23,9 @@ dependencies = [
     "nonebot-plugin-localstore>=0.1.0",
 ]
 
+[project.entry-points."nonebot.plugin"]
+nonebot_plugin_astra_bot = "nonebot_plugin_astra_bot"
+
 [project.urls]
 homepage = "https://github.com/EveGlowLuna/nonebot-plugin-astra-bot"
 
