@@ -157,10 +157,10 @@ AI: {ai_reply[:500]}
         return stored
 
     except json.JSONDecodeError as e:
-        logger.debug(f"Fact extraction JSON parse failed: {e}")
+        logger.trace(f"Fact extraction JSON parse failed: {e}")
         return []
     except Exception as e:
-        logger.debug(f"Fact extraction failed: {e}")
+        logger.trace(f"Fact extraction failed: {e}")
         return []
 
 

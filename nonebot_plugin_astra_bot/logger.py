@@ -22,7 +22,7 @@ def _setup_file_sink():
         encoding="utf-8",
         rotation="10 MB",
         retention="30 days",
-        level="DEBUG",
+        level="TRACE",
     )
 
 

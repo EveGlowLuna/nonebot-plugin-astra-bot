@@ -176,7 +176,7 @@ async def generate_reply(
     ]:
         for retry in range(RETRY_LIMIT):
             try:
-                logger.debug(f"AI call attempt: provider={provider_key}, model={provider_name} (retry {retry + 1}/{RETRY_LIMIT})")
+                logger.trace(f"AI call attempt: provider={provider_key}, model={provider_name} (retry {retry + 1}/{RETRY_LIMIT})")
                 result = await chat(
                     provider=provider_key,
                     model=provider_name,
@@ -192,9 +192,9 @@ async def generate_reply(
 
                 reasoning = result.get("reasoning")
                 if reasoning:
-                    logger.debug(f"Reasoning from {provider_key}:\n{reasoning}")
+                    logger.trace(f"Reasoning from {provider_key}:\n{reasoning}")
 
-                logger.debug(f"Raw AI response from {provider_key}:\n{content}")
+                logger.trace(f"Raw AI response from {provider_key}:\n{content}")
 
                 content = _clean_json(content)
                 parsed = json.loads(content)

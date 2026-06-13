@@ -94,7 +94,7 @@ async def handle_group_message(bot: Bot, event: GroupMessageEvent):
                 "message": plain[:100],
             }
             segments.append(reply_seg)
-            logger.debug(f"Reply segment resolved via event.reply: {reply_seg}")
+            logger.trace(f"Reply segment resolved via event.reply: {reply_seg}")
         except Exception as e:
             logger.warning(f"Failed to extract reply from event.reply: {e}")
     for seg in event.get_message():
@@ -116,7 +116,7 @@ async def handle_group_message(bot: Bot, event: GroupMessageEvent):
                     "message": plain[:100],
                 }
                 segments.append(reply_seg)
-                logger.debug(f"Reply segment resolved via get_msg: {reply_seg}")
+                logger.trace(f"Reply segment resolved via get_msg: {reply_seg}")
             except Exception as e:
                 # 三级降级：get_msg → DB 查询 → 占位文本
                 logger.warning(f"get_msg failed for reply {seg.data.get('id')}: {e}, falling back to DB")
@@ -181,14 +181,14 @@ async def handle_group_message(bot: Bot, event: GroupMessageEvent):
         if handled:
             await bot.send_group_msg(group_id=group_id, message=reply)
             return
-        logger.debug(f"Command message ignored: {plain_text[:30]}")
+        logger.trace(f"Command message ignored: {plain_text[:30]}")
         return
 
     is_at = event.is_tome()
     is_keyword = any(plain_text.startswith(k) for k in config.keyword) if config.keyword else False
 
     if is_user_ignored(group_id, user_id, is_at):
-        logger.debug(f"Ignored user {user_name}({user_id}) in group {group_id}")
+        logger.trace(f"Ignored user {user_name}({user_id}) in group {group_id}")
         return
 
 
@@ -217,7 +217,7 @@ async def handle_group_message(bot: Bot, event: GroupMessageEvent):
         return
 
     if not should_reply(is_at, ReplyController.is_replying(group_id), config, is_keyword):
-        logger.debug(f"Ignored message from {user_name}({user_id}) in group {group_id}: probability miss")
+        logger.trace(f"Ignored message from {user_name}({user_id}) in group {group_id}: probability miss")
         return
 
     ReplyController.set_replying(group_id, True)
@@ -328,7 +328,7 @@ async def _reply_flow(
 
 
     memories = get_memories(group_id)
-    logger.debug(f"Loaded {len(memories)} memories for group {group_id}: {memories}")
+    logger.trace(f"Loaded {len(memories)} memories for group {group_id}: {memories}")
     memory_section = "\n".join(f"{i}. {m}" for i, m in enumerate(memories, 1)) if memories else ""
 
 
@@ -350,7 +350,7 @@ async def _reply_flow(
         current_message=plain_text,
         relevant_user_ids=relevant_uids,
     )
-    logger.debug(f"Enhanced memory context: LTM={len(memory_ctx['long_term'])} chars, Facts={len(memory_ctx['facts'])} chars")
+    logger.trace(f"Enhanced memory context: LTM={len(memory_ctx['long_term'])} chars, Facts={len(memory_ctx['facts'])} chars")
 
 
     personal_lines = []
@@ -408,7 +408,7 @@ async def _reply_flow(
         logger.info(f"Trigger message {event.message_id} recalled during prep, aborting")
         return
 
-    logger.debug(f"===== AI PROMPT for group {group_id} =====\n{main_prompt}\n===== END PROMPT =====")
+    logger.trace(f"===== AI PROMPT for group {group_id} =====\n{main_prompt}\n===== END PROMPT =====")
 
     reply_text, reply_json = await _ai_call_with_search(bot, event, group_id, user_name, user_id, plain_text, main_prompt)
 
@@ -441,7 +441,7 @@ async def _reply_flow(
             await _send_reply(bot, event, group_id, reply_text, reply_json=reply_json, record_reply=True)
         output = await exec_fn(plugin_val)
         logger.info(f"Plugin executed: {plugin_val}")
-        logger.debug(f"Plugin output:\n{output[:1000]}")
+        logger.trace(f"Plugin output:\n{output[:1000]}")
         plugin_inject = f"你执行了命令 `{plugin_val}`，输出如下：\n{output[:2000]}"
         main_prompt += "\n\n" + plugin_inject
         await append_message(group_id, {
@@ -514,7 +514,7 @@ async def _ai_call_with_search(
         )
 
         enhanced_prompt = main_prompt + "\n\n" + search_inject
-        logger.debug(f"===== SEARCH INJECT PROMPT round {search_round} =====\n{search_inject}\n===== END SEARCH INJECT =====")
+        logger.trace(f"===== SEARCH INJECT PROMPT round {search_round} =====\n{search_inject}\n===== END SEARCH INJECT =====")
         reply_text, reply_json = await generate_reply(enhanced_prompt)
         search_query = reply_json.get("search", "")
 

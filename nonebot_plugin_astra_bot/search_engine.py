@@ -154,13 +154,13 @@ async def run_search(initial_query: str, context: str) -> dict:
     )
 
     try:
-        logger.debug("Starting MCP stdio client...")
+        logger.trace("Starting MCP stdio client...")
         async with stdio_client(server_params) as (read, write):
-            logger.debug("MCP stdio client connected")
+            logger.trace("MCP stdio client connected")
             async with ClientSession(read, write) as session:
-                logger.debug("MCP session created, initializing...")
+                logger.trace("MCP session created, initializing...")
                 await session.initialize()
-                logger.debug("MCP session initialized")
+                logger.trace("MCP session initialized")
 
                 messages = [
                     {"role": "system", "content": _build_system_prompt()},
@@ -201,7 +201,7 @@ async def run_search(initial_query: str, context: str) -> dict:
                         if name == "respond":
                             msg_text = args.get("message", "")
                             logger.info(f"Search agent: respond({len(msg_text)} chars)")
-                            logger.debug(f"Respond content: {msg_text[:500]}")
+                            logger.trace(f"Respond content: {msg_text[:500]}")
                             summary_result["summary"] = msg_text
                             return summary_result
 
@@ -243,7 +243,7 @@ async def run_search(initial_query: str, context: str) -> dict:
                         if tc.function.name == "respond":
                             forced = json.loads(tc.function.arguments).get("message", "")
                             logger.info(f"Search agent force respond ({len(forced)} chars)")
-                            logger.debug(f"Forced respond content: {forced[:500]}")
+                            logger.trace(f"Forced respond content: {forced[:500]}")
                             summary_result["summary"] = forced
                 elif msg.content:
                     logger.info(f"Search agent force respond (text, {len(msg.content)} chars)")

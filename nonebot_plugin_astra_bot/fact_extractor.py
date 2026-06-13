@@ -49,9 +49,9 @@ async def extract_and_store(group_id: int, user_id: str, user_name: str, user_ms
                 continue
             add_memory(group_id, fact)
 
-        logger.debug(f"Extracted {len(facts)} facts from {user_name}({user_id})")
+        logger.trace(f"Extracted {len(facts)} facts from {user_name}({user_id})")
 
     except json.JSONDecodeError:
-        logger.debug(f"Fact extraction JSON parse failed for {user_name}")
+        logger.trace(f"Fact extraction JSON parse failed for {user_name}")
     except Exception as e:
-        logger.debug(f"Fact extraction failed for {user_name}: {e}")
+        logger.trace(f"Fact extraction failed for {user_name}: {e}")

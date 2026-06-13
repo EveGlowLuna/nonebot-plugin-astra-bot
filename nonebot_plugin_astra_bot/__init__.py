@@ -8,6 +8,7 @@ require("nonebot_plugin_localstore")
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, NoticeEvent
 from nonebot.plugin import PluginMetadata
 
+from nonebot_plugin_astra_bot.config import Config
 from nonebot_plugin_astra_bot.desktop_notify import send_desktop_notification
 from nonebot_plugin_astra_bot.history_manager import delete_by_message_id
 from nonebot_plugin_astra_bot.message_handler import handle_group_message
@@ -22,6 +23,7 @@ __plugin_meta__ = PluginMetadata(
     type="application",
     homepage="https://github.com/EveGlowLuna/nonebot-plugin-astra-bot",
     supported_adapters={"~onebot.v11"},
+    config=Config,
 )
 
 reply = on_message(priority=10)
@@ -50,13 +52,13 @@ async def handle_notice(bot: Bot, event: NoticeEvent):
         if deleted:
             logger.info(f"Removed recalled message {message_id} from history in group {group_id}")
         else:
-            logger.debug(f"Recalled message {message_id} not found in history (group {group_id})")
+            logger.trace(f"Recalled message {message_id} not found in history (group {group_id})")
 
     elif notice_type == "bot_offline":
         msg = data.get("message", "")
         tag = data.get("tag", "")
         logger.warning(f"Bot offline detected: tag={tag}, message={msg}")
-        send_desktop_notification("AstraBot 离线通知", "QQ凭证过期，请重新登录")
+        await send_desktop_notification("AstraBot 离线通知", "QQ凭证过期，请重新登录")
 
 
 PluginLoader.load_all()
